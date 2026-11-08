@@ -95,7 +95,7 @@ class VehicleCard extends StatelessWidget {
                       runSpacing: 6,
                       children: [
                         Text(
-                          'Precio: ${vehiculo.precio}',
+                          'Precio: ${vehiculo.precioFormateado}',
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -108,7 +108,7 @@ class VehicleCard extends StatelessWidget {
                             const Icon(Icons.speed, size: 16, color: Colors.grey),
                             const SizedBox(width: 4),
                             Text(
-                              vehiculo.kilometraje,
+                              vehiculo.kilometrajeFormateado,
                               style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
                             ),
                           ],

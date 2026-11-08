@@ -7,7 +7,6 @@ import '../pages/vehicle_detail_page.dart';
 import '../pages/vehicle_create_page.dart';
 import '../pages/favorites_page.dart';
 import '../pages/gemini_page.dart';
-import '../pages/gallery_page.dart';
 import 'login_screen.dart';
 
 enum MainFlowView {
@@ -253,7 +252,9 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           final filtrados = _vehiculos.where((v) {
             if (_searchQuery.isEmpty) return true;
             final q = _searchQuery.toLowerCase();
-            return v.titulo.toLowerCase().contains(q) ||
+            return v.marca.toLowerCase().contains(q) ||
+                v.linea.toLowerCase().contains(q) ||
+                v.titulo.toLowerCase().contains(q) ||
                 v.ubicacion.toLowerCase().contains(q) ||
                 v.publicador.toLowerCase().contains(q) ||
                 v.combustible.toLowerCase().contains(q);
@@ -316,16 +317,11 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     }
 
     // Tab 2: Estimación Gemini IA
-    if (_selectedTabIndex == 2) {
-      return GeminiPage(
-        isLoading: _cargandoIA,
-        resultado: _geminiResultado,
-        onConsultar: _onConsultarIA,
-      );
-    }
-
-    // Tab 3: Galería de Componentes Reutilizables
-    return const GalleryPage();
+    return GeminiPage(
+      isLoading: _cargandoIA,
+      resultado: _geminiResultado,
+      onConsultar: _onConsultarIA,
+    );
   }
 
   @override
@@ -363,10 +359,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
               const SidebarItemData(
                 icon: Icons.psychology,
                 label: 'Estimación (IA)',
-              ),
-              const SidebarItemData(
-                icon: Icons.widgets_outlined,
-                label: 'Galería de Widgets',
               ),
             ],
           ),

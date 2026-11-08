@@ -2,12 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:automarket_v2/main.dart';
 import 'package:automarket_v2/models/vehiculo.dart';
+import 'package:automarket_v2/models/usuario.dart';
+import 'package:automarket_v2/models/favorito.dart';
 import 'package:automarket_v2/widgets/widgets.dart';
 import 'package:automarket_v2/pages/vehicle_list_page.dart';
 import 'package:automarket_v2/pages/vehicle_detail_page.dart';
 import 'package:automarket_v2/pages/vehicle_create_page.dart';
 
 void main() {
+  test('0. Coherencia con modelo de BD relacional: tipos numéricos, llaves y modelos', () {
+    const vehiculo = VehiculoAnuncio(
+      id: 'v1',
+      marca: 'Mazda',
+      linea: '3 Grand Touring',
+      ano: 2019,
+      precio: 65000000.0,
+      kilometraje: 48500,
+      ciudad: 'Cali, Valle del Cauca',
+      idVendedor: 'usr_part_01',
+      publicador: 'Particular',
+      transmision: 'Automática',
+      combustible: 'Gasolina',
+      color: 'Rojo Diamante',
+    );
+
+    // Tipos numéricos para la BD
+    expect(vehiculo.precio, isA<double>());
+    expect(vehiculo.precio, 65000000.0);
+    expect(vehiculo.kilometraje, isA<int>());
+    expect(vehiculo.kilometraje, 48500);
+    expect(vehiculo.ano, isA<int>());
+    expect(vehiculo.ano, 2019);
+
+    // Campos separados
+    expect(vehiculo.marca, 'Mazda');
+    expect(vehiculo.linea, '3 Grand Touring');
+    expect(vehiculo.titulo, 'Mazda 3 Grand Touring 2019');
+
+    // Getters para UI
+    expect(vehiculo.precioFormateado, '\$ 65.000.000 COP');
+    expect(vehiculo.kilometrajeFormateado, '48.500 km');
+
+    // Modelo Usuario y roles
+    const usuario = Usuario(
+      id: 'usr_emp_01',
+      nombre: 'Carlos Rodríguez',
+      correo: 'carlos@automarket.com',
+      rol: 'Empleado',
+    );
+    expect(usuario.rol, 'Empleado');
+
+    // Relación Favorito Usuario-Vehiculo
+    final fav = Favorito(
+      id: 'fav_1',
+      idUsuario: usuario.id,
+      idVehiculo: vehiculo.id,
+      fechaAgregado: DateTime.now(),
+    );
+    expect(fav.idUsuario, usuario.id);
+    expect(fav.idVehiculo, vehiculo.id);
+  });
+
   testWidgets('1. Entrar: Muestra login inicial con botones reutilizables', (WidgetTester tester) async {
     await tester.pumpWidget(const AutoMarketApp());
     expect(find.text('AutoMarket V2'), findsOneWidget);
@@ -22,10 +77,13 @@ void main() {
 
     const testVehiculo = VehiculoAnuncio(
       id: 'test_1',
-      titulo: 'Toyota Hilux 2022',
-      precio: '\$ 150.000.000 COP',
-      kilometraje: '25.000 km',
-      ubicacion: 'Cali',
+      marca: 'Toyota',
+      linea: 'Hilux',
+      ano: 2022,
+      precio: 150000000.0,
+      kilometraje: 25000,
+      ciudad: 'Cali',
+      idVendedor: 'usr_part_01',
       publicador: 'Particular',
       transmision: 'Automática',
       combustible: 'Diésel',
@@ -76,14 +134,16 @@ void main() {
 
     const testVehiculo = VehiculoAnuncio(
       id: 'test_2',
-      titulo: 'Mazda CX-5 2020',
-      precio: '\$ 88.000.000 COP',
-      kilometraje: '40.000 km',
-      ubicacion: 'Medellín',
+      marca: 'Mazda',
+      linea: 'CX-5',
+      ano: 2020,
+      precio: 88000000.0,
+      kilometraje: 40000,
+      ciudad: 'Medellín',
+      idVendedor: 'usr_part_01',
       publicador: 'Particular',
       transmision: 'Automática',
       combustible: 'Gasolina',
-      ano: '2020',
       color: 'Rojo',
       descripcion: 'Excelente camioneta familiar con todo al día.',
     );
@@ -142,11 +202,13 @@ void main() {
 
     expect(find.text('Publicar Nuevo Vehículo'), findsOneWidget);
 
-    // Ingresar datos requeridos
-    await tester.enterText(find.widgetWithText(AppTextField, 'Título del Anuncio *'), 'Renault Logan 2021');
-    await tester.enterText(find.widgetWithText(AppTextField, 'Precio Comercial *'), '42.000.000');
-    await tester.enterText(find.widgetWithText(AppTextField, 'Kilometraje *'), '30.000');
-    await tester.enterText(find.widgetWithText(AppTextField, 'Ubicación / Ciudad *'), 'Cali');
+    // Ingresar datos requeridos de forma normalizada
+    await tester.enterText(find.widgetWithText(AppTextField, 'Marca *'), 'Renault');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Línea / Referencia *'), 'Logan');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Precio Comercial (COP) *'), '42000000');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Kilometraje *'), '30000');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Ciudad / Ubicación *'), 'Cali');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Año / Modelo *'), '2021');
 
     // Presionar guardar
     final guardarBtn = find.text('Guardar y Publicar Anuncio');
@@ -155,8 +217,15 @@ void main() {
     await tester.pump();
 
     expect(creado, isNotNull);
+    expect(creado!.marca, 'Renault');
+    expect(creado!.linea, 'Logan');
+    expect(creado!.ano, 2021);
     expect(creado!.titulo, 'Renault Logan 2021');
-    expect(creado!.precio, '\$ 42.000.000 COP');
+    expect(creado!.precio, 42000000.0);
+    expect(creado!.precioFormateado, '\$ 42.000.000 COP');
+    expect(creado!.kilometraje, 30000);
+    expect(creado!.kilometrajeFormateado, '30.000 km');
+    expect(creado!.idVendedor, isNotEmpty);
 
     // Probar cancelar
     final cancelBtn = find.text('Cancelar');

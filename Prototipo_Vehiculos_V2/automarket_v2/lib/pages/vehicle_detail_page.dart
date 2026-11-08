@@ -96,7 +96,7 @@ class VehicleDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        vehiculo.precio,
+                        vehiculo.precioFormateado,
                         style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
@@ -144,7 +144,7 @@ class VehicleDetailPage extends StatelessWidget {
                 child: VehicleSpecTile(
                   icon: Icons.speed,
                   label: 'Kilometraje',
-                  value: vehiculo.kilometraje,
+                  value: vehiculo.kilometrajeFormateado,
                 ),
               ),
               const SizedBox(width: 14),
@@ -174,7 +174,7 @@ class VehicleDetailPage extends StatelessWidget {
                 child: VehicleSpecTile(
                   icon: Icons.calendar_today,
                   label: 'Año / Modelo',
-                  value: vehiculo.ano ?? 'No especificado',
+                  value: '${vehiculo.ano}',
                 ),
               ),
               const SizedBox(width: 14),

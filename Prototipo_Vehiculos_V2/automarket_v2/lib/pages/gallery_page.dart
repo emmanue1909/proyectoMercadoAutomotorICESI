@@ -9,15 +9,17 @@ class GalleryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     const demoVehiculo = VehiculoAnuncio(
       id: 'demo1',
-      titulo: 'Mazda 3 Grand Touring 2021',
-      precio: '\$ 72.000.000 COP',
-      kilometraje: '35.000 km',
-      ubicacion: 'Cali, Valle del Cauca',
+      marca: 'Mazda',
+      linea: '3 Grand Touring',
+      ano: 2021,
+      precio: 72000000.0,
+      kilometraje: 35000,
+      ciudad: 'Cali, Valle del Cauca',
+      idVendedor: 'usr_part_01',
       publicador: 'Particular',
       transmision: 'Automática',
       combustible: 'Gasolina',
       color: 'Rojo Diamante',
-      ano: '2021',
     );
 
     return SingleChildScrollView(
