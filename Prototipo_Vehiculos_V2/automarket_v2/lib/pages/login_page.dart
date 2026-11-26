@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import '../widgets/widgets.dart';
 
 class LoginPage extends StatelessWidget {
-  final VoidCallback onLoginAsEmployee;
-  final VoidCallback onLoginAsAdmin;
+  final TextEditingController correoController;
+  final TextEditingController contrasenaController;
+  final bool cargando;
+  final String? mensajeError;
+  final VoidCallback onIniciarSesion;
 
   const LoginPage({
     Key? key,
-    required this.onLoginAsEmployee,
-    required this.onLoginAsAdmin,
+    required this.correoController,
+    required this.contrasenaController,
+    required this.onIniciarSesion,
+    this.cargando = false,
+    this.mensajeError,
   }) : super(key: key);
 
   @override
@@ -52,26 +58,41 @@ class LoginPage extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     'Plataforma Inteligente de Vehículos',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey.shade600,
                     ),
                   ),
                   const SizedBox(height: 32),
-                  AppButton(
-                    label: 'Ingresar como Empleado',
-                    icon: Icons.person_outline,
-                    variant: AppButtonVariant.primary,
-                    isFullWidth: true,
-                    onPressed: onLoginAsEmployee,
+                  AppTextField(
+                    label: 'Correo',
+                    controller: correoController,
+                    prefixIcon: Icons.email_outlined,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 14),
+                  AppTextField(
+                    label: 'Contraseña',
+                    controller: contrasenaController,
+                    prefixIcon: Icons.lock_outline,
+                    obscureText: true,
+                    onFieldSubmitted: (_) => onIniciarSesion(),
+                  ),
+                  if (mensajeError != null) ...[
+                    const SizedBox(height: 14),
+                    Text(
+                      mensajeError!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 13, color: Colors.red.shade700),
+                    ),
+                  ],
+                  const SizedBox(height: 20),
                   AppButton(
-                    label: 'Ingresar como Administrador',
-                    icon: Icons.admin_panel_settings_outlined,
-                    variant: AppButtonVariant.outlined,
+                    label: cargando ? 'Ingresando…' : 'Iniciar sesión',
+                    isLoading: cargando,
                     isFullWidth: true,
-                    onPressed: onLoginAsAdmin,
+                    onPressed: onIniciarSesion,
                   ),
                 ],
               ),
